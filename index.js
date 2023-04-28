@@ -20,7 +20,11 @@ const chanel = {
   },
 };
 
+// Order list
 const basket = [];
+
+// Product list
+let stock = [];
 
 // 1. render the stock
 // 2. basket
@@ -29,7 +33,7 @@ const basket = [];
 
 // First fucntion to run. Entry point
 function main() {
-  const stock = getStockForShop();
+  stock = getStockForShop();
   renderStock(stock);
 
   // look after it (Set)
@@ -43,13 +47,13 @@ function main() {
 
   // look after it (Array.from)
   renderFilters(Array.from(colors), Array.from(models));
-  initInteractions(stock);
+  initInteractions();
 }
 
 // -- Render Functions (View Layer) --
 
 // drawing, generating, altering, updating existsing elements
-function renderStock(stock) {
+function renderStock() {
   // 1. Get the target dom node
   const screen = document.getElementById("screen");
 
@@ -177,7 +181,7 @@ function renderBasket() {
 // -- GLUE CODE (GLUE SECTION)
 // It brings together the dom and the controllers via event handler
 
-function initInteractions(stock) {
+function initInteractions() {
   const orderButtons = document.querySelectorAll(".order-button");
   const colorSelectors = document.querySelectorAll("#color-selector .color");
   const modelSelector = document.querySelector("#model-selector");
@@ -196,7 +200,7 @@ function initInteractions(stock) {
 function addItemToBasketController(event) {
   // anonymus function expression
   const name = event.target.dataset.itemName;
-  const item = findItemByName(stock, name);
+  const item = findItemByName(name);
   addItemToBasket(item);
   renderBasket();
 }
@@ -209,7 +213,7 @@ function addItemToBasketController(event) {
  * @param {*} name 
  * @returns stock item or null
  */
-function findItemByName(stock, name) {
+function findItemByName(name) {
   let found = null;
 
   for (let i = 0; i < stock.length; i++) {
@@ -221,12 +225,12 @@ function findItemByName(stock, name) {
   return found
 }
 
-function filterStockByModel(stock, model) {
+function filterStockByModel(model) {
   // 1. filter the stock by a model
   // 2. return with the new list
 }
 
-function filterStockByColor(stock, color) {
+function filterStockByColor(color) {
   // 1. filter the stock by a color
   // 2. return with the new list
 }
