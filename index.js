@@ -46,6 +46,197 @@ function main() {
   initInteractions(stock);
 }
 
+// -- Render Functions (View Layer) --
+
+// drawing, generating, altering, updating existsing elements
+function renderStock(stock) {
+  // 1. Get the target dom node
+  const screen = document.getElementById("screen");
+
+  // 2. clear the target dom node
+  screen.innerHTML = "";
+
+  // 3. iterate through the stock array
+  for (let i = 0; i < stock.length; i++) {
+    // render one item
+    const div = createProductDomSection(stock[i]);
+    screen.append(div);
+  }
+}
+
+// renderDomItem
+// createItemSection
+// renderingItems
+// createProductSection
+// displayItems
+// CreateProductRender
+// generateOneStockItemDom
+// createProductDomSection
+// create something new element
+/**
+ * This function will create a new dom element (div)
+ * and put the whole stock item content in it.
+ * Returns with the new element.
+ */
+function createProductDomSection(item) {
+  // generate a div for the item
+  const stockItemEl = document.createElement("div");
+
+  // El postfix mean's this is a dom element
+  // <h1>item.name</h1>
+  const nameEl = document.createElement("h1");
+  nameEl.innerText = item.name;
+
+  const priceEl = document.createElement("div");
+  priceEl.innerText = item.price.huf + " HUF";
+
+  const colorEl = document.createElement("div");
+  colorEl.style.backgroundColor = item.color;
+  colorEl.className = "color";
+
+  const sizesTitlteEl = document.createElement("h3");
+  sizesTitlteEl.innerText = "Sizes";
+
+  const sizesEl = document.createElement("ul");
+  for (let i = 0; i < item.sizes.length; i++) {
+    const sizeListEl = document.createElement("li");
+    sizeListEl.innerText = item.sizes[i];
+    sizesEl.append(sizeListEl);
+  }
+
+  const orderBtnEl = document.createElement("button");
+  orderBtnEl.innerText = "Add to order";
+  orderBtnEl.className = "order-button";
+  orderBtnEl.dataset.itemName = item.name;
+
+  stockItemEl.append(
+    nameEl,
+    priceEl,
+    orderBtnEl,
+    colorEl,
+    sizesTitlteEl,
+    sizesEl
+  );
+
+  return stockItemEl;
+}
+
+function renderFilters(colors, models) {
+  // colors: ['#f00', '#0f0', ..]
+  // models: ['chanel', 'prada']
+
+  //1. get the target element
+  const filters = document.getElementById("filter");
+  
+  // 2. clear the target element dom
+  filters.innerHTML = "";
+
+  //3. genedare filter elements
+  //4. return the filters
+
+  const modelSelectorEl = document.createElement("select");
+  modelSelectorEl.id = "model-selector";
+  
+  const defautlOptionEl = document.createElement("option");
+  defautlOptionEl.innerText = "--Select a model--";
+  defautlOptionEl.value = "";
+
+  modelSelectorEl.append(defautlOptionEl);
+  for (let i = 0; i < models.length; i++) {
+    const modelOptionEl = document.createElement("option");
+    modelOptionEl.innerText = models[i];
+    modelOptionEl.value = models[i];
+    modelSelectorEl.append(modelOptionEl);
+  }
+
+  const colorSelectorEl = document.createElement("div");
+  colorSelectorEl.id = "color-selector";
+  for (let i = 0; i < colors.length; i++) {
+    const colorEl = document.createElement("div");
+    colorEl.style.backgroundColor = colors[i];
+    colorEl.className = "color";
+    colorSelectorEl.append(colorEl);
+  }
+
+  filters.append(colorSelectorEl, modelSelectorEl);
+}
+
+function renderBasket() {
+  // 1. clear the basket element
+  const basketEl = document.getElementById("basket");
+  basket.innerHTML = "";
+
+  // 2. render the new basket
+  for (let i = 0; i < basket.length; i++) {
+    const div = document.createElement("div");
+    div.innerText = basket[i].name;
+    basketEl.append(div);
+  }
+}
+
+// -- GLUE CODE (GLUE SECTION)
+// It brings together the dom and the controllers via event handler
+
+function initInteractions(stock) {
+  const orderButtons = document.querySelectorAll(".order-button");
+  const colorSelectors = document.querySelectorAll("#color-selector .color");
+  const modelSelector = document.querySelector("#model-selector");
+
+  for (let i = 0; i < orderButtons.length; i++) {
+    orderButtons[i].addEventListener("click", addItemToBasketController);
+  }
+}
+
+// -- CONTROLLER FUNCTIONS --
+
+/**
+ * Order button click event handler,
+ * to add an item to a basket
+ */
+function addItemToBasketController(event) {
+  // anonymus function expression
+  const name = event.target.dataset.itemName;
+  const item = findItemByName(stock, name);
+  addItemToBasket(item);
+  renderBasket();
+}
+
+// -- MODEL FUNCTIONS --
+
+/**
+ * 
+ * @param {*} stock 
+ * @param {*} name 
+ * @returns stock item or null
+ */
+function findItemByName(stock, name) {
+  let found = null;
+
+  for (let i = 0; i < stock.length; i++) {
+    if (stock[i].name === name) {
+      found = stock[i];
+    }
+  }
+
+  return found
+}
+
+function filterStockByModel(stock, model) {
+  // 1. filter the stock by a model
+  // 2. return with the new list
+}
+
+function filterStockByColor(stock, color) {
+  // 1. filter the stock by a color
+  // 2. return with the new list
+}
+
+function addItemToBasket(item) {
+  // 1. add the item variable to a basket
+  // 2. request to backend for store the order
+  basket.push(item);
+}
+
 function getStock() {
   const stock = [
     {
@@ -116,142 +307,6 @@ function getStockForShop() {
 
   // 3. return with the stock
   return stock;
-}
-
-function renderStock(stock) {
-  const screen = document.getElementById("screen");
-
-  // 1. clear the screen
-  screen.innerHTML = "";
-
-  // 2. render the items from stock
-  for (let i = 0; i < stock.length; i++) {
-    const div = renderOneItem(stock[i]);
-    screen.append(div);
-  }
-}
-
-function renderOneItem(item) {
-  // generate a div for the item
-  const div = document.createElement("div");
-  const name = document.createElement("h1");
-  const price = document.createElement("div");
-  const color = document.createElement("div");
-  const sizes = document.createElement("table");
-  const order = document.createElement("button");
-
-  name.innerText = item.name;
-  price.innerText = item.price.huf + " HUF";
-  color.style.backgroundColor = item.color;
-  color.className = "color";
-
-  order.innerText = "Add to order";
-  order.className = "order-button";
-  order.itemName = item.name;
-
-  const tr = document.createElement("tr");
-  for (let i = 0; i < item.sizes.length; i++) {
-    const td = document.createElement("td");
-    td.innerText = item.sizes[i];
-    tr.append(td);
-  }
-  sizes.append(tr);
-  div.append(name, price, order, color, sizes);
-
-  return div;
-}
-
-function renderFilters(colors, models) {
-  // colors: ['#f00', '#0f0', ..]
-  // models: ['chanel', 'prada']
-
-  //1. clear the filters
-  const filters = document.getElementById("filter");
-  filters.innerHTML = "";
-
-  //2. genedare filter elements
-  //3. return the filters
-
-  const div = document.createElement("div");
-  const modelSelector = document.createElement("select");
-  const colorSelector = document.createElement("div");
-
-  colorSelector.id = "color-selector";
-  modelSelector.id = "model-selector";
-
-  const def = document.createElement("option");
-  def.innerText = "--Select a model--";
-  def.value = "";
-
-  modelSelector.append(def);
-  for (let i = 0; i < models.length; i++) {
-    const option = document.createElement("option");
-    option.innerText = models[i];
-    option.value = models[i];
-    modelSelector.append(option);
-  }
-
-  for (let i = 0; i < colors.length; i++) {
-    const color = document.createElement("div");
-    color.style.backgroundColor = colors[i];
-    color.className = "color";
-    colorSelector.append(color);
-  }
-
-  div.append(colorSelector, modelSelector);
-  filters.append(div);
-}
-
-function renderBasket() {
-  // 1. clear the basket element
-  const basketEl = document.getElementById("basket");
-  basket.innerHTML = "";
-
-  // 2. render the new basket
-  for (let i = 0; i < basket.length; i++) {
-    const div = document.createElement("div");
-    div.innerText = basket[i].name;
-    basketEl.append(div);
-  }
-}
-
-function initInteractions(stock) {
-  const orderButtons = Array.from(document.querySelectorAll(".order-button"));
-  const colorSelectors = document.querySelectorAll("#color-selector .color");
-  const modelSelector = document.querySelector("#model-selector");
-
-  for (let i = 0; i < orderButtons.length; i++) {
-    orderButtons[i].addEventListener("click", function (event) {
-      // anonymus function expression
-      const name = event.target.itemName;
-      const item = findItemByName(stock, name);
-      addItemToBasket(item);
-      renderBasket();
-    });
-  }
-}
-
-function findItemByName(stock, name) {
-  // look after (Array.prototye.find)
-  return stock.find(function (item) {
-    return item.name === name;
-  });
-}
-
-function filterStockByModel(stock, model) {
-  // 1. filter the stock by a model
-  // 2. return with the new list
-}
-
-function filterStockByColor(stock, color) {
-  // 1. filter the stock by a color
-  // 2. return with the new list
-}
-
-function addItemToBasket(item) {
-  // 1. add the item variable to a basket
-  // 2. request to backend for store the order
-  basket.push(item);
 }
 
 main();
